@@ -1,11 +1,20 @@
 const api = {};
 const addNoteForm = document.getElementById('add-note');
 const myNotesDiv = document.getElementById('notes');
-const notes = [];
+
+let notes = [];
 
 const renderNotes = () => {
   const html = notes.length > 0 ? notes.join('') : '<p>No notes yet</p>';
   myNotesDiv.innerHTML = html;
+}
+
+const populateNoteHTML = (noteHTML, idx) => {
+  notes[idx] = UTF8ToString(noteHTML);
+}
+
+const deleteNote = (noteId) => {
+  notes.splice(noteId, 1);
 }
 
 const main = () => {
@@ -19,35 +28,30 @@ const main = () => {
       content
     );
 
-    switch (noteId) {
-      case -1:
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Note was too long!",
-        });
-        return;
-      case -2:
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Maximun number of notes reached!",
-        });
-        return;
-      default:
-        break;
+    if (noteId < 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Note was too long!",
+      });
     }
 
-    const noteHTML = api.getNoteHTML(noteId);
-    notes.push(noteHTML);
+    notes = [];
+    api.populateNoteHTML(api.populateNoteHTMLCallback);
     renderNotes();
+
     addNoteForm.reset();
   })
 }
 
 Module.onRuntimeInitialized = async (_) => {
+
+  api.populateNoteHTMLCallback = Module.addFunction(populateNoteHTML,'iii');
+  api.deleteNoteCallback = Module.addFunction(deleteNote,'vi');
+
   api.addNote = Module.cwrap('addNote', 'number', ['string', 'string']);
-  api.getNoteHTML = Module.cwrap('getNoteHTML', 'string', ['number']);
+  api.deleteNote = Module.cwrap('deleteNote', 'number', ['number', 'number']);
+  api.populateNoteHTML = Module.cwrap('populateNoteHTML', null, ['number']);
 
   main();
 };
