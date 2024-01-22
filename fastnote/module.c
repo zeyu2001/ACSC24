@@ -6,15 +6,15 @@
 
 typedef struct note {
   char *(*toHTML) (char *title, char *content);
+  struct note *next;
   char *title;
   char *content;
-  struct note *next;
 } note;
 
 note *head = NULL;
 
 char *sanitize(char *str) {
-  char *safe = malloc(strlen(str) + 6);
+  char *safe = malloc(strlen(str) * 6);
   safe[0] = '\0';
   
   while (*str) {
@@ -44,20 +44,21 @@ char *sanitize(char *str) {
 }
 
 char *toSafeHTML(char *title, char *content) {
-  char *safeHTML = malloc(1000);
+  int length = strlen(title) + strlen(content) + 100;
+  char *safeHTML = malloc(length);
   safeHTML[0] = '\0';
 
   char *safeTitle = sanitize(title);
   char *safeContent = sanitize(content);
 
-  snprintf(safeHTML, 1000, "<article><h1>%s</h1><p>%s</p></article>", safeTitle, safeContent);
+  snprintf(safeHTML, length, "<article><h1>%s</h1><p>%s</p></article>", safeTitle, safeContent);
   return safeHTML;
 }
 
 EMSCRIPTEN_KEEPALIVE
 int addNote(char *title, char *content) {
 
-  if (strlen (title) > 20 || strlen (content) > 100) {
+  if (strlen (title) > 40 || strlen (content) > 100) {
     return -1;
   }
 
@@ -66,7 +67,6 @@ int addNote(char *title, char *content) {
 
   strcpy(noteTitle, title);
   strcpy(noteContent, content);
-
   struct note *n = malloc(sizeof(struct note));
   n->title = noteTitle;
   n->content = noteContent;

@@ -15,7 +15,7 @@ const notesToHTML = (notes) => {
   `).join('');
 }
 
-const addNote = (title, content) => {
+const addNote = (title, content, isBatched = false) => {
 
   saved.push({
     'action': 'add',
@@ -38,8 +38,10 @@ const addNote = (title, content) => {
     return;
   }
 
-  api.populateNoteHTML(api.populateNoteHTMLCallback);
-  renderNotes();
+  if (!isBatched) {
+    api.populateNoteHTML(api.populateNoteHTMLCallback);
+    renderNotes();
+  }
 }
 
 const renderNotes = () => {
@@ -51,15 +53,17 @@ const populateNoteHTML = (noteHTML, idx) => {
   notes[idx] = UTF8ToString(noteHTML);
 }
 
-const deleteNote = (noteId) => {
+const deleteNote = (noteId, isBatched = false) => {
   saved.push({
     'action': 'delete',
     'noteId': noteId
   })
   shareUrl.href = `${window.location.origin}?s=${btoa(JSON.stringify(saved))}`;
 
-  notes.splice(noteId, 1);
-  renderNotes();
+  if (!isBatched) {
+    notes.splice(noteId, 1);
+    renderNotes();
+  }
 }
 
 const main = () => {
@@ -76,19 +80,23 @@ const main = () => {
   if (serialized) {
     todo = JSON.parse(atob(serialized));
 
-    todo.forEach((action) => {
-      if (action.action == 'add') {
+    todo.forEach((step) => {
+      if (step.action == 'add') {
         addNote(
-          action.title,
-          action.content
+          step.title,
+          step.content,
+          true
         );
-      } else if (action.action == 'delete') {
+      } else if (step.action == 'delete') {
         api.deleteNote(
-          action.noteId,
-          api.deleteNoteCallback
+          step.noteId,
+          api.deleteNoteCallback,
+          true
         );
       }
     });
+    api.populateNoteHTML(api.populateNoteHTMLCallback);
+    renderNotes();
   }
 }
 
