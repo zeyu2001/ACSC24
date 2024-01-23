@@ -10,7 +10,7 @@ const notesToHTML = (notes) => {
   return notes.map((note, idx) => `
     <div data-note-id="${idx}">
       ${note}
-      <button class="contrast outline" onclick="api.deleteNote(${idx}, api.deleteNoteCallback)">Delete</button>
+      <button class="contrast outline" data-idx="${idx}">Delete</button>
     </div>
   `).join('');
 }
@@ -47,6 +47,13 @@ const addNote = (title, content, isBatched = false) => {
 const renderNotes = () => {
   const html = notes.length > 0 ? notesToHTML(notes) : '<p>No notes yet</p>';
   myNotesDiv.innerHTML = html;
+  const deleteButtons = document.querySelectorAll('[data-idx]');
+  deleteButtons.forEach((button) => {
+    button.addEventListener('click', (e) => {
+      const noteId = e.target.dataset.idx;
+      api.deleteNote(noteId, api.deleteNoteCallback)
+    });
+  });
 }
 
 const populateNoteHTML = (noteHTML, idx) => {

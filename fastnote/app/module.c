@@ -58,7 +58,7 @@ char *toSafeHTML(char *title, char *content) {
 EMSCRIPTEN_KEEPALIVE
 int addNote(char *title, char *content) {
 
-  if (strlen (title) > 40 || strlen (content) > 100) {
+  if (strlen (title) > 65 || strlen (content) > 100) {
     return -1;
   }
 
